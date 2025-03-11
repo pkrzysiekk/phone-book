@@ -17,11 +17,12 @@ namespace PhoneBook.Models
         public void Show()
         {
             Contact contact = new Contact();
+            ICollection<Contact> contacts = new List<Contact>();
 
             while (true)
             {
                 var choice = AnsiConsole.Prompt(new SelectionPrompt<MenuChoices>()
-                    .Title("[Blue]Main menup[/]")
+                    .Title("[Blue]Main menu[/]")
                     .AddChoices(Enum.GetValues<MenuChoices>())
                     .UseConverter(x => x switch
                     {
@@ -45,12 +46,39 @@ namespace PhoneBook.Models
                         break;
 
                     case MenuChoices.ViewContacts:
+                        contacts = _dbController.GetAll();
+                        if (contacts.Count == 0)
+                        {
+                            AnsiConsole.MarkupLine("[red]No contacts found![/]");
+                            break;
+                        }
+                        PhoneBookView.ShowContacts(contacts);
                         break;
 
                     case MenuChoices.UpdateContact:
+                        contacts = _dbController.GetAll();
+                        if (contacts.Count == 0)
+                        {
+                            AnsiConsole.MarkupLine("[red]No contacts found![/]");
+                            break;
+                        }
+                        contact = _userChoice.GetUserSelection(contacts);
+                        var contactToUpdate = _userChoice.GetUser();
+                        _dbController.Update(contact.Id, contactToUpdate);
+                        AnsiConsole.MarkupLine("[green]Contact updated successfully![/]");
                         break;
 
                     case MenuChoices.DeleteContact:
+                        contacts = _dbController.GetAll();
+                        if (contacts.Count == 0)
+                        {
+                            AnsiConsole.MarkupLine("[red]No contacts found![/]");
+                            break;
+                        }
+                        contact = _userChoice.GetUserSelection(contacts);
+                        _dbController.Remove(contact.Id);
+                        AnsiConsole.MarkupLine("[green]Contact deleted successfully![/]");
+
                         break;
 
                     case MenuChoices.Exit:
