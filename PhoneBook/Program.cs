@@ -1,13 +1,12 @@
 ﻿using PhoneBook.Models;
 
-namespace PhoneBook
+namespace PhoneBook;
+
+internal class Program
 {
-    internal class Program
+    private static void Main(string[] args)
     {
-        private static void Main(string[] args)
-        {
-            Menu menu = new Menu();
-            menu.Show();
-        }
+        Menu menu = new Menu();
+        menu.Show();
     }
 }
